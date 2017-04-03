@@ -1,0 +1,95 @@
+<link rel="import" href="../polymer/polymer.html">
+<script src="../jsonp/jsonp.js"></script>
+<script src="../arg.js/dist/arg-1.3.min.js"></script>
+
+<script>
+class TxAjaxJsonpElement extends Polymer.Element {
+      static get is() { return "tx-ajax-jsonp"; }
+
+      // configure the owner property
+      static get properties() {
+        return {
+          url: {
+            type: String,
+            value: null,
+            notify: true,
+            observer: '_urlChanged'
+          },
+          data: {
+            type: Object,
+            value: null,
+            notify: true,
+            observer: '_dataChanged'
+          },
+          callbackParamName: String,
+          eventSuccess: String,
+          eventError: String
+        };
+      }
+
+      _urlChanged(value) {
+        this.urlParsed = Arg.url(value, this.data);
+      }
+
+      _dataChanged(value) {
+        this.urlParsed = Arg.url(this.url, value);
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      send() {
+        try {
+          this.load(this.urlParsed)
+              .then(this.fireEventSuccess.bind(this), this.fireEventError.bind(this));
+        } catch (error) {
+          this.fireEventError(error);
+        }
+      }
+
+      fireEventSuccess(response) {
+        this.dispatchEvent(new CustomEvent('on-success', {bubbles: true, composed: true, detail: response}));
+      }
+      
+      fireEventError(response) {
+        this.dispatchEvent(new CustomEvent('on-error', { bubbles: true, composed: true, detail: response }));
+      }
+
+      /**
+       * Loads data asynchronously via JSONP.
+       */
+      load(url) 
+      {
+        let index = 0;
+        const timeout = 5000;
+
+        return new Promise((resolve, reject) => 
+        {
+          const callback = '__callback' + index++;
+          const timeoutID = window.setTimeout(() => 
+          {
+            reject(new Error('Request timeout.'));
+          }, timeout);
+
+          window[callback] = response => {
+            window.clearTimeout(timeoutID);
+            resolve(response);
+          };
+
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.async = true;
+          script.src = url + (url.indexOf('?') === -1 ? '?' : '&') + 'callback=' + callback;
+          document.getElementsByTagName('head')[0].appendChild(script);
+        });
+      }      
+
+    }
+    
+    customElements.define(TxAjaxJsonpElement.is, TxAjaxJsonpElement);
+</script>

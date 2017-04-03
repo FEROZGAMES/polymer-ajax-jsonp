@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../tx-ajax-jsonp.html">
+  </head>
+  <body>
+
+    <test-fixture id="tx-ajax-jsonp-fixture">
+      <template is="dom-template">
+        <tx-ajax-jsonp id="jsonp"
+          autoload="{{autoload}}"
+          url="{{url}}"
+          data="{{data}}"
+          callback-param-name="{{pcallback}}"
+        ></tx-ajax-jsonp>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('<tx-ajax-jsonp>', function() {
+
+        test('all params correctly', function(done) {
+          var jsonp = fixture('tx-ajax-jsonp-fixture');
+          
+          jsonp.addEventListener('on-success', function(e) {
+            assert.isNotNull(e.detail);
+            done();
+          });
+
+          jsonp.addEventListener('on-error', function(e) {
+            done('Unspected error');
+          });
+
+          jsonp.autoload = false;
+          jsonp.url = 'http://jsfiddle.net/echo/jsonp/';
+          jsonp.callback = 'onload';
+          jsonp.data = null;
+          jsonp.send();
+        });
+
+        test('compose bad url', function(done) {
+          var jsonp = fixture('tx-ajax-jsonp-fixture');
+          
+          jsonp.addEventListener('on-success', function(e) {
+            done('Unspected error');
+          });
+
+          jsonp.addEventListener('on-error', function(e) {
+            done();
+          });
+
+          jsonp.autoload = false;
+          jsonp.url = 'COMPOSE-URL-FAILS';
+          jsonp.callback = 'onload';
+          jsonp.data = null;
+          jsonp.send();
+        });       
+
+        // test('good library loads', function(done) {
+        //   var jsonp = fixture('tx-ajax-jsonp-fixture');
+          
+        //   jsonp.addEventListener('on-success', function() {
+        //     done('Unspected test case');
+        //   });
+
+        //   jsonp.addEventListener('on-error', function(data) {
+        //     done();
+        //   });
+
+        //   jsonp.autoload = false;
+        //   jsonp.url = 'https://apis.google.com/js/plusone.js';
+        //   jsonp.callback = 'onload';
+        //   jsonp.data = null;
+        //   jsonp.send();
+        // });
+          
+        // test('good library loads', function(done) {
+        //   var jsonp = fixture('jsonp-fixture');
+        //   jsonp.addEventListener('success', function() {
+        //       // Ensure that we can load the same library twice.
+        //       // TODO: assert that only one network request is made.
+        //       var second = document.createElement('tx-ajax-jsonp');
+        //       second.notifyEvent = 'success';
+        //       second.addEventListener('success', function() { done() });
+        //       second.addEventListener('library-error-message-changed', function() { done('second attempt fails')});
+        //       second.libraryUrl = "https://apis.google.com/js/plusone.js?onload=%%callback%%";
+        //     }
+        //   );
+        //   jsonp.addEventListener('library-error-message-changed', function() {
+        //       done('library did not load');
+        //     }
+        //   );
+        //   jsonp.libraryUrl = "https://apis.google.com/js/plusone.js?onload=%%callback%%";
+        // });
+
+        // test('bad library dns fails to load', function(done) {
+        //   var jsonp = fixture('jsonp-fixture');
+        //   jsonp.addEventListener('success', function() {
+        //       done('bad dns somehow loaded?');
+        //     }
+        //   );
+        //   jsonp.addEventListener('library-error-message-changed', function() {
+        //       assert.isNotNull(jsonp.libraryErrorMessage);
+        //       done();
+        //     }
+        //   );
+        //   jsonp.libraryUrl = "https://badapis.google.com/js/plusone.js?onload=%%callback%%";
+        // });
+
+        // test('libraryurl mising %%callback%%', function(done) {
+        //   var jsonp = fixture('jsonp-fixture');
+        //   jsonp.addEventListener('success', function() {
+        //       done('no callback somehow loaded?');
+        //     }
+        //   );
+        //   jsonp.addEventListener('library-error-message-changed', function() {
+        //       assert.isNotNull(jsonp.libraryErrorMessage);
+        //       done();
+        //     }
+        //   );
+        //   jsonp.libraryUrl = "https://apis.google.com/js/plusone.js?onload";
+        // });
+
+      });
+    </script>
+
+  </body>
+</html>

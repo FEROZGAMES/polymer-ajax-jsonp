@@ -1,0 +1,29 @@
+{
+  "name": "tx-ajax-jsonp",
+  "homepage": "https://github.com/TEXYONGAMES/polymer-ajax-jsonp",
+  "description": "Makes it easy to make jsonp ajax calls and parse the response",
+  "main": "tx-ajax-jsonp.html",
+  "keywords": [
+    "ajax",
+    "jsonp",
+    "polymer",
+    "polymer2"
+  ],
+  "authors": [
+    "texyongames"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#2.0.0-rc.2"
+  },
+  "devDependencies": {
+    "web-component-tester": "^5.0.1"
+  }
+}
